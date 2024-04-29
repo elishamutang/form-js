@@ -1,0 +1,177 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+:root {
+    --dot-color: rgb(56, 189, 56);
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #c9ccd3;
+    background-image: linear-gradient(
+        -180deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+    background-blend-mode: lighten;
+}
+
+.container {
+    width: 70%;
+    height: 700px;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    grid-template-rows: 100%;
+    grid-template-areas: 'loginForm image';
+
+    border: 1px solid grey;
+    border-radius: 20px;
+
+    background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.login {
+    width: 100%;
+    height: 100%;
+}
+
+#loginForm {
+    grid-area: loginForm;
+    /* border: 1px solid red; */
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+#loginForm > * {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+#image {
+    grid-area: image;
+    height: 100%;
+    overflow-y: hidden;
+    filter: brightness(0.8);
+    transition: 1s;
+}
+
+#image:hover {
+    filter: brightness(1);
+}
+
+img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+#heading-one {
+    color: black;
+    margin-top: 1rem;
+    border-top-left-radius: 20px;
+    font-weight: bold;
+}
+
+span {
+    color: var(--dot-color);
+    font-size: 40px;
+    margin-left: 2px;
+}
+
+#brand {
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 3px solid lightslategray;
+    border-radius: 1px;
+}
+
+#call-to-action {
+    margin-top: 0.5rem;
+}
+
+#call-to-action > h2 {
+    font-weight: normal;
+    font-size: 20px;
+}
+
+form {
+    /* border: 1px solid red; */
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+        'email email'
+        'pwd pwd'
+        'pwd-confirm pwd-confirm'
+        'country zipcode';
+    margin-top: 2rem;
+    gap: 1.5rem;
+}
+
+form > div {
+    display: flex;
+    flex-direction: column;
+}
+
+input,
+label {
+    width: 100%;
+}
+
+label {
+    margin-bottom: 5px;
+}
+
+input {
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+input:hover {
+    box-shadow: 0px 1px 5px 1px var(--dot-color);
+}
+
+input:focus {
+    outline: 2px solid var(--dot-color);
+}
+
+#userEmail {
+    grid-area: email;
+}
+
+#userPwd {
+    grid-area: pwd;
+}
+
+#userConfirmPwd {
+    grid-area: pwd-confirm;
+}
+
+#userCountry {
+    grid-area: country;
+}
+
+#userZipCode {
+    grid-area: zipcode;
+}
