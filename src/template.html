@@ -1,11 +1,81 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%=htmlWebpackPlugin.options.title%></title>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><%=htmlWebpackPlugin.options.title%></title>
+        <link
+            href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+            rel="stylesheet"
+        />
+    </head>
     <body>
+        <div class="container">
+            <div class="login" id="loginForm">
+                <div class="heading" id="brand">Places<span>.</span></div>
+                <div class="heading" id="heading-one">
+                    <h1>Welcome to Places<span>.</span></h1>
+                </div>
+                <div class="heading" id="call-to-action">
+                    <h2>Create an account</h2>
+                </div>
+                <form>
+                    <div id="userEmail">
+                        <label for="uemail">Email:</label>
+                        <input
+                            type="email"
+                            name="uemail"
+                            id="uemail"
+                            placeholder="johndoe@gmail.com"
+                            required
+                        />
+                    </div>
+
+                    <div id="userPwd">
+                        <label for="pwd">Password:</label>
+                        <input type="password" name="pwd" id="pwd" required />
+                    </div>
+
+                    <div id="userConfirmPwd">
+                        <label for="pwd-confirmation"
+                            >Password Confirmation:</label
+                        >
+                        <input
+                            type="password"
+                            name="pwd-confirmation"
+                            id="pwd-confirmation"
+                            required
+                        />
+                    </div>
+
+                    <div id="userCountry">
+                        <label for="country">Country:</label>
+                        <input
+                            type="text"
+                            name="country"
+                            id="country"
+                            placeholder="Australia"
+                            required
+                        />
+                    </div>
+
+                    <div id="userZipCode">
+                        <label for="zipCode">Zip Code:</label>
+                        <input
+                            type="tel"
+                            name="zipCode"
+                            id="zipCode"
+                            placeholder="6101"
+                            minlength="4"
+                            maxlength="4"
+                            required
+                        />
+                    </div>
+                </form>
+            </div>
+            <div class="login" id="image">
+                <img src="" alt="minimal-building" />
+            </div>
+        </div>
     </body>
 </html>
