@@ -121,7 +121,8 @@ form {
         'email email'
         'pwd pwd'
         'pwd-confirm pwd-confirm'
-        'country zipcode';
+        'country zipcode'
+        'submit submit';
     margin-top: 2rem;
     gap: 1.5rem;
 }
@@ -140,7 +141,7 @@ label {
     margin-bottom: 5px;
 }
 
-input {
+input:not(input#submitBtn) {
     text-decoration: none;
     font-size: 18px;
     padding: 10px;
@@ -148,12 +149,16 @@ input {
     border: none;
 }
 
-input:hover {
-    box-shadow: 0px 1px 5px 1px var(--dot-color);
+input:hover:not(input#submitBtn) {
+    outline: 1px solid var(--dot-color);
 }
 
-input:focus {
+input:focus:not(input#submitBtn) {
     outline: 2px solid var(--dot-color);
+}
+
+#submitBtn {
+    grid-area: submit;
 }
 
 #userEmail {
