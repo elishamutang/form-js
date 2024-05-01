@@ -29,23 +29,24 @@
                             placeholder="johndoe@gmail.com"
                             required
                         />
+                        <span class="errorMsg"></span>
                     </div>
 
                     <div id="userPwd">
                         <label for="pwd">Password:</label>
                         <input type="password" name="pwd" id="pwd" required />
+                        <span class="errorMsg"></span>
                     </div>
 
                     <div id="userConfirmPwd">
-                        <label for="pwd-confirmation"
-                            >Password Confirmation:</label
-                        >
+                        <label for="pwdConfirm">Password Confirmation:</label>
                         <input
                             type="password"
-                            name="pwd-confirmation"
-                            id="pwd-confirmation"
+                            name="pwdConfirm"
+                            id="pwdConfirm"
                             required
                         />
+                        <span class="errorMsg"></span>
                     </div>
 
                     <div id="userCountry">
@@ -57,6 +58,7 @@
                             placeholder="Australia"
                             required
                         />
+                        <span class="errorMsg"></span>
                     </div>
 
                     <div id="userZipCode">
@@ -67,10 +69,16 @@
                             id="zipCode"
                             placeholder="6101"
                             minlength="4"
-                            maxlength="4"
+                            maxlength="12"
                             required
                         />
+                        <span class="errorMsg"></span>
                     </div>
+                    <input
+                        type="submit"
+                        id="submitBtn"
+                        value="Create an account"
+                    />
                 </form>
             </div>
             <div class="login" id="image">
