@@ -1,4 +1,10 @@
 import './styles.css'
-import generateForm from './formValidation'
+import formValidation from './formValidation'
+import buildingPic from '/assets/danist-soh-dqXiw7nCb9Q-unsplash.jpg'
 
-generateForm()
+// Append cover image
+const imageTag = document.querySelector('img')
+imageTag.src = buildingPic
+
+// Form validation
+formValidation()
