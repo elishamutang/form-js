@@ -12,9 +12,11 @@
     <body>
         <div class="container">
             <div class="login" id="loginForm">
-                <div class="heading" id="brand">Places<span>.</span></div>
+                <div class="heading" id="brand">
+                    Places<span class="dot">.</span>
+                </div>
                 <div class="heading" id="heading-one">
-                    <h1>Welcome to Places<span>.</span></h1>
+                    <h1>Welcome to Places<span class="dot">.</span></h1>
                 </div>
                 <div class="heading" id="call-to-action">
                     <h2>Create an account</h2>
@@ -23,6 +25,7 @@
                     <div id="userEmail">
                         <label for="uemail">Email:</label>
                         <input
+                            class="userInput"
                             type="email"
                             name="uemail"
                             id="uemail"
@@ -34,7 +37,13 @@
 
                     <div id="userPwd">
                         <label for="pwd">Password:</label>
-                        <input type="password" name="pwd" id="pwd" required />
+                        <input
+                            type="password"
+                            name="pwd"
+                            id="pwd"
+                            class="userInput"
+                            required
+                        />
                         <span class="errorMsg"></span>
                     </div>
 
@@ -44,6 +53,7 @@
                             type="password"
                             name="pwdConfirm"
                             id="pwdConfirm"
+                            class="userInput"
                             required
                         />
                         <span class="errorMsg"></span>
@@ -55,7 +65,9 @@
                             type="text"
                             name="country"
                             id="country"
+                            class="userInput"
                             placeholder="Australia"
+                            pattern="/^([^0-9]*)$/"
                             required
                         />
                         <span class="errorMsg"></span>
@@ -68,8 +80,9 @@
                             name="zipCode"
                             id="zipCode"
                             placeholder="6101"
-                            minlength="4"
-                            maxlength="12"
+                            maxlength="18"
+                            class="userInput"
+                            pattern="^[0-9]+$"
                             required
                         />
                         <span class="errorMsg"></span>
