@@ -32,9 +32,7 @@ export default function formValidation() {
         }
         // Ensure zip code entered by user is valid.
         if (userDetails.zipCode !== '') {
-            validateZipCode(userDetails.zipCode).then((result) => {
-                console.log(result)
-            })
+            validateZipCode(userDetails.zipCode)
         }
     })
 }
@@ -66,5 +64,16 @@ async function validateZipCode(userZipCode) {
             return err
         })
 
-    return zipCodeResults
+    zipCodeResults
+        .then((response) => {
+            return response.results
+        })
+        .then((results) => {
+            console.log(results)
+        })
+
+    // We want to check whether country has the correct zip code. To do this:
+    // 1. Get country input from input field.
+    // 2. Lookup country code
+    // 3. Check country code exists in the results for the input zip code.
 }
