@@ -41,21 +41,16 @@ function showError(inputElem) {
     console.log(inputElem.parentElement)
 }
 
-// In this async function, I installed the local-cors-proxy npm package to workaround the CORS issue that I was
-// experiencing when making API requests to zipCodeStack API.
 async function validateZipCode(userZipCode) {
-    const zipCodeStackURL = new URL('http://localhost:8010/proxy/v1/search')
+    const zipCodeStackURL = new URL('https://api.zipcodestack.com/v1/search')
 
     zipCodeStackURL.searchParams.append('codes', userZipCode)
+    zipCodeStackURL.searchParams.append('apikey', myKey)
 
-    const headers = {
-        apikey: myKey,
-        Accept: 'application/json',
-    }
+    console.log(zipCodeStackURL)
 
     const zipCodeResults = fetch(zipCodeStackURL, {
         method: 'GET',
-        headers,
     })
         .then((response) => {
             return response.json()
