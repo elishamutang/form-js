@@ -188,5 +188,9 @@ input:focus:not(input#submitBtn) {
     height: min-content;
     font-size: 12px;
     padding: 3px;
-    border-top-left-radius: -50px;
+    display: none;
+}
+
+.active {
+    display: block;
 }
