@@ -18,13 +18,11 @@ export default function formValidation() {
             if (!e.target.checkValidity()) {
                 console.log(e.target.value)
 
-                e.target.parentElement.querySelector('span').className +=
-                    ' active'
+                e.target.parentElement.querySelector('span').className += ' active'
 
                 showError(e.target)
             } else {
-                e.target.parentElement.querySelector('span').className =
-                    'errorMsg'
+                e.target.parentElement.querySelector('span').className = 'errorMsg'
 
                 e.target.parentElement.querySelector('span').textContent = ''
             }
