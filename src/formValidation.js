@@ -16,14 +16,9 @@ export default function formValidation() {
     formElem.addEventListener('input', (e) => {
         if (e.target.tagName === 'INPUT') {
             if (!e.target.checkValidity()) {
-                console.log(e.target.value)
-
-                e.target.parentElement.querySelector('span').className += ' active'
-
                 showError(e.target)
             } else {
                 e.target.parentElement.querySelector('span').className = 'errorMsg'
-
                 e.target.parentElement.querySelector('span').textContent = ''
             }
         }
@@ -42,18 +37,52 @@ export default function formValidation() {
         if (userDetails.zipCode !== '' && userDetails.country !== '') {
             validateZipCode(userDetails.zipCode, userDetails.country)
                 .then((result) => {
-                    console.log(result)
+                    if (!result) {
+                        // Country and zip code doesn't match, show error.
+                        showError(e.target)
+                    } else {
+                        const countryDivSpan = document.getElementById('userCountry').querySelector('span')
+                        const zipCodeDivSpan = document.getElementById('userZipCode').querySelector('span')
+
+                        // Remove active class from country and zipcode inputs if result from validateZipCode is true.
+                        if (
+                            Array.from(countryDivSpan.classList).includes('active') ||
+                            Array.from(zipCodeDivSpan.classList).includes('active')
+                        ) {
+                            countryDivSpan.className = 'errorMsg'
+                            zipCodeDivSpan.className = 'errorMsg'
+                        }
+                    }
                 })
                 .catch((err) => {
                     console.error(err)
                 })
         }
+        // Ensure pwd and pwdConfirm is equal. If not, call showError.
+        const isPwdIdentical = new Promise((resolve, reject) => {
+            if (userDetails.pwd !== '' && userDetails.pwdConfirm !== '') {
+                if (userDetails.pwd === userDetails.pwdConfirm) {
+                    resolve(true)
+                } else {
+                    reject(e.target)
+                }
+            }
+        })
+            .then((response) => {
+                return response
+            })
+            .catch((err) => {
+                showError(err)
+            })
     })
 }
 
+// Show error for each input field
 function showError(inputElem) {
     const divElem = inputElem.parentElement
     const spanElem = divElem.querySelector('span')
+
+    spanElem.className += ' active'
 
     if (inputElem.validity.typeMismatch) {
         spanElem.textContent = 'Invalid email address'
@@ -65,6 +94,18 @@ function showError(inputElem) {
 
     if (inputElem.validity.patternMismatch) {
         spanElem.textContent = 'Invalid input'
+    }
+
+    if (inputElem.id === 'pwdConfirm') {
+        spanElem.textContent = "Password doesn't match."
+    }
+
+    if (inputElem.id === 'country') {
+        spanElem.textContent = 'Invalid country.'
+    }
+
+    if (inputElem.id === 'zipCode') {
+        spanElem.textContent = 'Invalid zip code.'
     }
 }
 
