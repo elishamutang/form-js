@@ -15,11 +15,22 @@ export default function formValidation() {
     // When user is typing.
     formElem.addEventListener('input', (e) => {
         if (e.target.tagName === 'INPUT') {
+            const spanElem = e.target.parentElement.querySelector('span')
             if (!e.target.checkValidity()) {
                 showError(e.target)
             } else {
-                e.target.parentElement.querySelector('span').className = 'errorMsg'
-                e.target.parentElement.querySelector('span').textContent = ''
+                spanElem.className = 'errorMsg'
+                spanElem.textContent = ''
+
+                if (Array.from(e.target.classList).includes('invalid')) {
+                    e.target.className = Array.from(e.target.classList)
+                        .filter((value) => {
+                            return value !== 'invalid'
+                        })
+                        .map((value) => {
+                            return value
+                        })
+                }
             }
         }
     })
@@ -37,43 +48,98 @@ export default function formValidation() {
         if (userDetails.zipCode !== '' && userDetails.country !== '') {
             validateZipCode(userDetails.zipCode, userDetails.country)
                 .then((result) => {
+                    const countryDivElem = document.getElementById('country')
+                    const zipCodeDivElem = document.getElementById('zipCode')
+
+                    const relevantElem = e.target === countryDivElem ? countryDivElem : zipCodeDivElem
+
                     if (!result) {
                         // Country and zip code doesn't match, show error.
-                        showError(e.target)
+                        showError(relevantElem)
                     } else {
-                        const countryDivSpan = document.getElementById('userCountry').querySelector('span')
-                        const zipCodeDivSpan = document.getElementById('userZipCode').querySelector('span')
+                        const countryDivSpan = countryDivElem.parentElement.querySelector('span')
+                        const zipCodeDivSpan = zipCodeDivElem.parentElement.querySelector('span')
 
                         // Remove active class from country and zipcode inputs if result from validateZipCode is true.
-                        if (
-                            Array.from(countryDivSpan.classList).includes('active') ||
-                            Array.from(zipCodeDivSpan.classList).includes('active')
-                        ) {
-                            countryDivSpan.className = 'errorMsg'
-                            zipCodeDivSpan.className = 'errorMsg'
+                        countryDivSpan.className = 'errorMsg'
+                        zipCodeDivSpan.className = 'errorMsg'
+
+                        if (Array.from(countryDivElem.classList).includes('invalid')) {
+                            countryDivElem.className = Array.from(countryDivElem.classList)
+                                .filter((value) => {
+                                    return value !== 'invalid'
+                                })
+                                .map((value) => {
+                                    return value
+                                })
+                        } else if (Array.from(zipCodeDivElem.classList).includes('invalid')) {
+                            zipCodeDivElem.className = Array.from(zipCodeDivElem.classList)
+                                .filter((value) => {
+                                    return value !== 'invalid'
+                                })
+                                .map((value) => {
+                                    return value
+                                })
                         }
+                    }
+
+                    return result
+                })
+                .catch((err) => {
+                    console.log(err)
+
+                    const countryDivElem = document.getElementById('country')
+                    const zipCodeDivElem = document.getElementById('zipCode')
+
+                    const relevantElem = e.target === countryDivElem ? countryDivElem : zipCodeDivElem
+
+                    showError(relevantElem)
+                })
+        }
+        // Ensure pwd and pwdConfirm is equal. If not, call showError.
+        const isPwdIdentical = new Promise((resolve, reject) => {
+            if (userDetails.pwd !== '' && userDetails.pwdConfirm !== '') {
+                const pwdConfirmInput = document.getElementById('pwdConfirm')
+                if (userDetails.pwd === userDetails.pwdConfirm) {
+                    resolve(pwdConfirmInput)
+                } else {
+                    reject(pwdConfirmInput)
+                }
+            }
+        })
+            .then((pwdConfirmInput) => {
+                pwdConfirmInput.className = 'userInput'
+                pwdConfirmInput.parentElement.querySelector('span').className = 'errorMsg'
+                return true
+            })
+            .catch((err) => {
+                showError(err)
+                return false
+            })
+
+        // !* RE-THINK THIS (currently validateZipCode is called twice)
+        // Wait for validateZipCode and isPwdIdentical to resolve, then process output.
+        if (formElem.checkValidity()) {
+            Promise.all([validateZipCode(userDetails.zipCode, userDetails.country), isPwdIdentical])
+                .then(([zipCodeValidate, pwdValidate]) => {
+                    if (zipCodeValidate && pwdValidate) {
+                        submitBtn.disabled = false
+                    } else {
+                        submitBtn.disabled = true
                     }
                 })
                 .catch((err) => {
                     console.error(err)
                 })
         }
-        // Ensure pwd and pwdConfirm is equal. If not, call showError.
-        const isPwdIdentical = new Promise((resolve, reject) => {
-            if (userDetails.pwd !== '' && userDetails.pwdConfirm !== '') {
-                if (userDetails.pwd === userDetails.pwdConfirm) {
-                    resolve(true)
-                } else {
-                    reject(e.target)
-                }
-            }
-        })
-            .then((response) => {
-                return response
-            })
-            .catch((err) => {
-                showError(err)
-            })
+    })
+
+    formElem.addEventListener('submit', (e) => {
+        e.preventDefault()
+
+        const submittedData = Object.fromEntries(new FormData(e.target).entries())
+
+        console.log(submittedData)
     })
 }
 
@@ -82,7 +148,14 @@ function showError(inputElem) {
     const divElem = inputElem.parentElement
     const spanElem = divElem.querySelector('span')
 
-    spanElem.className += ' active'
+    const submitBtn = document.querySelector('button')
+    submitBtn.disabled = true
+
+    spanElem.className = 'errorMsg active'
+
+    if (!Array.from(inputElem.classList).includes('invalid')) {
+        inputElem.className += ' invalid'
+    }
 
     if (inputElem.validity.typeMismatch) {
         spanElem.textContent = 'Invalid email address'
@@ -156,19 +229,21 @@ async function validateZipCode(userZipCode, userCountry) {
             console.log(countryCode)
 
             const zipCodeInput = zipCode[userZipCode]
-
             // Initial result
             let result = false
 
-            zipCodeInput.forEach((obj) => {
-                if (obj.country_code === countryCode) {
-                    result = true
-                }
-            })
+            if (zipCodeInput !== undefined || country !== undefined) {
+                zipCodeInput.forEach((obj) => {
+                    if (obj.country_code === countryCode) {
+                        result = true
+                    }
+                })
+            }
 
             return result
         })
-        .then((result) => {
-            return result
+        .catch((err) => {
+            console.error(err)
+            return false
         })
 }
