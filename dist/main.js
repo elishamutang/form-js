@@ -15,9 +15,7 @@
             var r = t.g.document
             if (!e && r && (r.currentScript && (e = r.currentScript.src), !e)) {
                 var c = r.getElementsByTagName('script')
-                if (c.length)
-                    for (var n = c.length - 1; n > -1 && (!e || !/^http(s?):/.test(e)); )
-                        e = c[n--].src
+                if (c.length) for (var n = c.length - 1; n > -1 && (!e || !/^http(s?):/.test(e)); ) e = c[n--].src
             }
             if (!e) throw new Error('Automatic publicPath is not supported in this browser')
             ;(e = e
