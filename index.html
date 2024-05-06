@@ -15,9 +15,7 @@
                 <div class="heading" id="heading-one">
                     <h1>Welcome to Places<span class="dot">.</span></h1>
                 </div>
-                <div class="heading" id="call-to-action">
-                    <h2>Create an account</h2>
-                </div>
+                <div class="heading" id="call-to-action"><h2>Create an account</h2></div>
                 <form>
                     <div id="userEmail">
                         <label for="uemail">Email:</label>
@@ -48,7 +46,7 @@
                             id="country"
                             class="userInput"
                             placeholder="Australia"
-                            pattern="/^([^0-9]*)$/"
+                            pattern="^([^0-9]*)$"
                             required
                         />
                         <span class="errorMsg"></span>
@@ -67,12 +65,10 @@
                         />
                         <span class="errorMsg"></span>
                     </div>
-                    <input type="submit" id="submitBtn" value="Create an account" />
+                    <button type="submit" id="submitBtn">Create account</button>
                 </form>
             </div>
-            <div class="login" id="image">
-                <img src="" alt="minimal-building" />
-            </div>
+            <div class="login" id="image"><img src="" alt="minimal-building" /></div>
         </div>
     </body>
 </html>
