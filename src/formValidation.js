@@ -18,11 +18,11 @@ export default function formValidation() {
     // When user is typing.
     formElem.addEventListener('input', (e) => {
         if (e.target.tagName === 'INPUT') {
-            const spanElem = e.target.parentElement.querySelector('span')
             submitBtn.disabled = true
             if (!e.target.checkValidity()) {
                 showError(e.target)
             } else {
+                const spanElem = e.target.parentElement.querySelector('span')
                 spanElem.className = 'errorMsg'
                 spanElem.textContent = ''
 
@@ -70,7 +70,6 @@ export default function formValidation() {
                 return false
             })
 
-        // !* RE-THINK THIS (currently validateZipCode is called twice)
         // Wait for validateZipCode and isPwdIdentical to resolve, then process output.
         if (formElem.checkValidity()) {
             Promise.all([validateZipCode(userDetails.zipCode, userDetails.country), isPwdIdentical])
@@ -174,68 +173,40 @@ function showError(inputElem) {
 }
 
 async function validateZipCode(userZipCode, userCountry) {
-    // ZipCodeStack API
-    const zipCodeStackURL = new URL('https://api.zipcodestack.com/v1/search')
+    try {
+        // REST Countries API.
+        const countriesApi = `https://restcountries.com/v3.1/name/${userCountry}`
 
-    zipCodeStackURL.searchParams.append('codes', userZipCode)
-    zipCodeStackURL.searchParams.append('apikey', myKey)
+        // Fetch country information
+        const countryResponse = await fetch(countriesApi)
 
-    console.log(userCountry)
+        let countryCode
 
-    // REST Countries API.
-    const countriesApi = `https://restcountries.com/v3.1/name/${userCountry}`
+        if (countryResponse.ok) {
+            const countryResults = await countryResponse.json()
+            countryResults.forEach((value) => {
+                if (value.name.common.toLowerCase() === userCountry.toLowerCase()) {
+                    countryCode = value.cca2
+                }
+            })
+        } else {
+            throw new Error(countryResponse.status)
+        }
 
-    // Fetch zip code data
-    const zipCodeResults = fetch(zipCodeStackURL, {
-        method: 'GET',
-    })
-        .then((response) => {
-            return response.json()
-        })
-        .then((response) => {
-            return response.results
-        })
-        .catch((err) => {
-            console.error(err)
-        })
+        // Validate country against zip code.
+        const zipCodeApi = `https://zip-api.eu/api/v1/codes/postal_code=${countryCode}-${userZipCode}`
 
-    // Fetch country information
-    const countryResults = fetch(countriesApi, {
-        method: 'GET',
-    })
-        .then((response) => {
-            return response.json()
-        })
-        .then((result) => {
-            return result
-        })
-        .catch((err) => {
-            console.error(err)
-        })
+        const zipCodeResponse = await fetch(zipCodeApi)
 
-    // Wait till all promises are settled.
-    return Promise.all([countryResults, zipCodeResults])
-        .then(([country, zipCode]) => {
-            const [countryCode] = country[0].altSpellings
-            console.log(countryCode)
+        if (zipCodeResponse.ok) {
+            return true
+        } else {
+            if (zipCodeResponse.status === 400) throw new Error('Invalid country/zipcode entered.')
 
-            const zipCodeInput = zipCode[userZipCode]
-
-            // Initial result
-            let result = false
-
-            if (zipCodeInput !== undefined && country !== undefined) {
-                zipCodeInput.forEach((obj) => {
-                    if (obj.country_code === countryCode) {
-                        result = true
-                    }
-                })
-            }
-
-            return result
-        })
-        .catch((err) => {
-            console.error(err)
-            return false
-        })
+            throw new Error(zipCodeResponse.status)
+        }
+    } catch (err) {
+        console.error(err)
+        return false
+    }
 }
