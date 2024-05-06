@@ -1,5 +1,3 @@
-import myKey from '../ignore/zipCodeStackAPIKey'
-
 export default function formValidation() {
     const formElem = document.querySelector('form')
 
@@ -128,8 +126,17 @@ export default function formValidation() {
         e.preventDefault()
 
         const submittedData = Object.fromEntries(new FormData(e.target).entries())
-
         console.log(submittedData)
+
+        const allInputs = Array.from(document.querySelectorAll('input'))
+
+        allInputs.forEach((elem) => {
+            elem.value = ''
+        })
+
+        submitBtn.disabled = true
+
+        alert('Check your login info in the console (press F12)')
     })
 }
 
