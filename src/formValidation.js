@@ -3,6 +3,9 @@ import myKey from '../ignore/zipCodeStackAPIKey'
 export default function formValidation() {
     const formElem = document.querySelector('form')
 
+    const submitBtn = document.getElementById('submitBtn')
+    submitBtn.disabled = true
+
     // User object
     const userDetails = {
         uemail: '',
@@ -16,6 +19,7 @@ export default function formValidation() {
     formElem.addEventListener('input', (e) => {
         if (e.target.tagName === 'INPUT') {
             const spanElem = e.target.parentElement.querySelector('span')
+            submitBtn.disabled = true
             if (!e.target.checkValidity()) {
                 showError(e.target)
             } else {
@@ -44,17 +48,39 @@ export default function formValidation() {
                 }
             })
         }
-        // Ensure zip code entered by user is valid.
-        if (userDetails.zipCode !== '' && userDetails.country !== '') {
-            validateZipCode(userDetails.zipCode, userDetails.country)
-                .then((result) => {
+
+        // Ensure pwd and pwdConfirm is equal. If not, call showError.
+        const isPwdIdentical = new Promise((resolve, reject) => {
+            if (userDetails.pwd !== '' && userDetails.pwdConfirm !== '') {
+                const pwdConfirmInput = document.getElementById('pwdConfirm')
+                if (userDetails.pwd === userDetails.pwdConfirm) {
+                    resolve(pwdConfirmInput)
+                } else {
+                    reject(pwdConfirmInput)
+                }
+            }
+        })
+            .then((pwdConfirmInput) => {
+                pwdConfirmInput.className = 'userInput'
+                pwdConfirmInput.parentElement.querySelector('span').className = 'errorMsg'
+                return true
+            })
+            .catch((err) => {
+                showError(err)
+                return false
+            })
+
+        // !* RE-THINK THIS (currently validateZipCode is called twice)
+        // Wait for validateZipCode and isPwdIdentical to resolve, then process output.
+        if (formElem.checkValidity()) {
+            Promise.all([validateZipCode(userDetails.zipCode, userDetails.country), isPwdIdentical])
+                .then(([zipCodeValidate, pwdValidate]) => {
                     const countryDivElem = document.getElementById('country')
                     const zipCodeDivElem = document.getElementById('zipCode')
 
                     const relevantElem = e.target === countryDivElem ? countryDivElem : zipCodeDivElem
 
-                    if (!result) {
-                        // Country and zip code doesn't match, show error.
+                    if (!zipCodeValidate) {
                         showError(relevantElem)
                     } else {
                         const countryDivSpan = countryDivElem.parentElement.querySelector('span')
@@ -83,45 +109,10 @@ export default function formValidation() {
                         }
                     }
 
-                    return result
+                    return [zipCodeValidate, pwdValidate]
                 })
-                .catch((err) => {
-                    console.log(err)
-
-                    const countryDivElem = document.getElementById('country')
-                    const zipCodeDivElem = document.getElementById('zipCode')
-
-                    const relevantElem = e.target === countryDivElem ? countryDivElem : zipCodeDivElem
-
-                    showError(relevantElem)
-                })
-        }
-        // Ensure pwd and pwdConfirm is equal. If not, call showError.
-        const isPwdIdentical = new Promise((resolve, reject) => {
-            if (userDetails.pwd !== '' && userDetails.pwdConfirm !== '') {
-                const pwdConfirmInput = document.getElementById('pwdConfirm')
-                if (userDetails.pwd === userDetails.pwdConfirm) {
-                    resolve(pwdConfirmInput)
-                } else {
-                    reject(pwdConfirmInput)
-                }
-            }
-        })
-            .then((pwdConfirmInput) => {
-                pwdConfirmInput.className = 'userInput'
-                pwdConfirmInput.parentElement.querySelector('span').className = 'errorMsg'
-                return true
-            })
-            .catch((err) => {
-                showError(err)
-                return false
-            })
-
-        // !* RE-THINK THIS (currently validateZipCode is called twice)
-        // Wait for validateZipCode and isPwdIdentical to resolve, then process output.
-        if (formElem.checkValidity()) {
-            Promise.all([validateZipCode(userDetails.zipCode, userDetails.country), isPwdIdentical])
                 .then(([zipCodeValidate, pwdValidate]) => {
+                    // Enable submit button after validating zipcode and password
                     if (zipCodeValidate && pwdValidate) {
                         submitBtn.disabled = false
                     } else {
@@ -229,10 +220,11 @@ async function validateZipCode(userZipCode, userCountry) {
             console.log(countryCode)
 
             const zipCodeInput = zipCode[userZipCode]
+
             // Initial result
             let result = false
 
-            if (zipCodeInput !== undefined || country !== undefined) {
+            if (zipCodeInput !== undefined && country !== undefined) {
                 zipCodeInput.forEach((obj) => {
                     if (obj.country_code === countryCode) {
                         result = true
